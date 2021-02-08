@@ -22,6 +22,6 @@ public class PercistentToken {
     private Long id;
     private String token;
     @OneToOne(fetch = LAZY)
-    private User user;
+    private Usera user;
     private Instant expiryDate;
 }
