@@ -4,6 +4,7 @@ import com.reddit.dto.AuthenticateDto;
 import com.reddit.dto.LoginRequest;
 import com.reddit.dto.UserAuthRequest;
 import com.reddit.exceptions.AuthRedditException;
+import com.reddit.exceptions.RedditException;
 import com.reddit.model.NotificationEmail;
 import com.reddit.model.PercistentToken;
 import com.reddit.model.Usera;
@@ -50,6 +51,14 @@ public class AuthService {
     "please click on the below url to activate your account : " +
             "http://localhost:8080/api/auth/accountVerification/" + token));
 }
+    @Transactional
+    public Usera getCurrentUser() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
+                getContext().getAuthentication().getPrincipal();
+        System.out.println(principal.toString());
+        return userRepository.findByUsername(principal.getUsername())
+                .orElseThrow(() -> new RedditException("User name not found - " + principal.getUsername()));
+    }
 
     private String generateUserToken(Usera user) {
        String verifyToekn =  UUID.randomUUID().toString();

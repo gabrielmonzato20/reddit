@@ -19,6 +19,7 @@
 
 	</properties>
 	<dependencies>
+
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
@@ -123,6 +124,16 @@
 						</path>
 						<!-- other annotation processors -->
 					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<jvmArguments>
+						-Xdebug 
+						-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000
+					</jvmArguments>
 				</configuration>
 			</plugin>
 		</plugins>
