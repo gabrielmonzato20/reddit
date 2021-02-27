@@ -12,6 +12,8 @@ import com.reddit.repository.PercistentTokenRepository;
 import com.reddit.repository.UseraRepository;
 import com.reddit.security.JwtProvider;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,11 +26,11 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
-@Transactional
 public class AuthService {
-
+    @Value("${server.port}")
+    private  String port;
     private final PasswordEncoder passwordEncoder;
     private final UseraRepository userRepository;
     private final PercistentTokenRepository percistentTokenRepository;
@@ -49,7 +51,7 @@ public class AuthService {
     mailService.sendEmail(new NotificationEmail("Please enter witch your email:",user.getEmail()
     ,"Thank you"+user.getUsername()+" for signing up to  Reddit Client , " +
     "please click on the below url to activate your account : " +
-            "http://localhost:8080/api/auth/accountVerification/" + token));
+            "<a href='http://localhost:"+this.port+"/api/auth/accountVerification/"+token+"'>Click Hear</a>"));
 }
     @Transactional
     public Usera getCurrentUser() {

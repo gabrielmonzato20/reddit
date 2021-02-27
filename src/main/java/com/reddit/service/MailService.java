@@ -25,7 +25,7 @@ public class MailService {
         messageHelper.setFrom("4d1f718043-5b180d@inbox.mailtrap.io");
         messageHelper.setTo(notificationEmail.getRecipient());
         messageHelper.setSubject(notificationEmail.getSubject());
-        messageHelper.setText(notificationEmail.getBody());
+        messageHelper.setText(notificationEmail.getBody(),true);
         };
         try{
 

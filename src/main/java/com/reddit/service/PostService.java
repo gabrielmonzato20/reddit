@@ -36,10 +36,7 @@ public class PostService {
     public void save(PostRequest postRequest) {
         SubReddit subreddit = subredditRepository.findByName(postRequest.getSubrreditName())
                 .orElseThrow(() -> new RedditException(postRequest.getSubrreditName()));
-        System.out.println("outhservice--==>"+authService.getCurrentUser());
-        Post pp = postMapper.map(postRequest, subreddit, authService.getCurrentUser());
-        System.out.println(pp.toString() +"=====>post");
-        //postRepository.save(postMapper.map(postRequest, subreddit, authService.getCurrentUser()));
+        postRepository.save(postMapper.map(postRequest, subreddit, authService.getCurrentUser()));
     }
 
     @Transactional(readOnly = true)
