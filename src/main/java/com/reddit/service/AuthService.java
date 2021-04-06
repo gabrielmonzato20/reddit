@@ -2,6 +2,7 @@ package com.reddit.service;
 
 import com.reddit.dto.AuthenticateDto;
 import com.reddit.dto.LoginRequest;
+import com.reddit.dto.RefrashTokenDto;
 import com.reddit.dto.UserAuthRequest;
 import com.reddit.exceptions.AuthRedditException;
 import com.reddit.exceptions.RedditException;
@@ -14,6 +15,7 @@ import com.reddit.security.JwtProvider;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -37,6 +39,7 @@ public class AuthService {
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final RefrashTokenService refrashTokenService;
 
 @Transactional
     public void signup(UserAuthRequest req){
@@ -92,6 +95,21 @@ return verifyToekn;
                     loginRequest.getPassworld()));
         SecurityContextHolder.getContext().setAuthentication(auth);
         String token = jwtProvider.generateToken(auth);
-        return new AuthenticateDto(loginRequest.getPassworld(),token);
+        return AuthenticateDto.builder()
+                .userName(loginRequest.getUserName())
+                .userToken(token)
+                .refreshToken(refrashTokenService.generatedRefrashToken().getToken())
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getTimeToken()))
+                .build();
     }
+
+    public AuthenticateDto refrashToken(RefrashTokenDto refrashTokenDto) {
+                    refrashTokenService.validateRefrashToken(refrashTokenDto.getRefrashToken());
+                    String token = jwtProvider.generateTokenWitchUserName(refrashTokenDto.getUserName());
+    return AuthenticateDto.builder()
+            .expiresAt(Instant.now().plusMillis(jwtProvider.getTimeToken()))
+            .refreshToken(refrashTokenDto.getRefrashToken())
+            .userName(refrashTokenDto.getUserName())
+            .userToken(token).build();
+}
 }

@@ -3,6 +3,7 @@ package com.reddit.security;
 import com.reddit.exceptions.AuthRedditException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.sql.Date;
 import java.time.Instant;
 
 import static io.jsonwebtoken.Jwts.parser;
@@ -23,6 +25,8 @@ public class JwtProvider {
 
     private KeyStore keyStore;
 
+    @Value("${jwt.token.timer}")
+    private Long timeToken;
 
     @PostConstruct
     public void init() {
@@ -43,6 +47,16 @@ public class JwtProvider {
                 .setSubject(principal.getUsername())
                 .setIssuedAt(from(Instant.now()))
                 .signWith(getPrivateKey())
+                .setExpiration(Date.from(Instant.now().
+                        plusMillis(timeToken)))
+                .compact();
+    }
+    public String generateTokenWitchUserName(String userName){
+        return Jwts.builder()
+                .setSubject(userName)
+                .setIssuedAt(from(Instant.now()))
+                .signWith(getPrivateKey())
+                .setExpiration(Date.from(Instant.now().plusMillis(timeToken)))
                 .compact();
     }
 
@@ -89,5 +103,7 @@ public class JwtProvider {
                 .getBody();
         return claims.getSubject();
     }
+
+    public Long getTimeToken(){return this.timeToken;}
 
 }
